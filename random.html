@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Random Role Assignment</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background-color: #f0f8ff;
+    }
+    h1 {
+      text-align: center;
+    }
+    .inputs {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 80px;
+      margin: 0 0.5rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      border-radius: 8px;
+      font-size: 1.2rem;
+    }
+    .jester {
+      background-color: #ffd700;
+    }
+    .imposter {
+      background-color: #ff6347;
+      color: white;
+    }
+    .crewmate {
+      background-color: #90ee90;
+    }
+    button {
+      padding: 0.7rem 1.2rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      border: none;
+      border-radius: 8px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Among Us Role Randomizer</h1>
+
+<div class="inputs">
+  <label>From: <input type="number" id="start" value="1"></label>
+  <label>To: <input type="number" id="end" value="25"></label>
+  <button onclick="assignRoles()">Assign Roles</button>
+</div>
+
+<p class="error" id="errorMsg"></p>
+
+<ul id="results"></ul>
+
+<script>
+  function assignRoles() {
+    const start = parseInt(document.getElementById('start').value);
+    const end = parseInt(document.getElementById('end').value);
+    const errorMsg = document.getElementById('errorMsg');
+    const results = document.getElementById('results');
+    results.innerHTML = '';
+    errorMsg.textContent = '';
+
+    if (isNaN(start) || isNaN(end) || start >= end) {
+      errorMsg.textContent = 'Please enter a valid range (start must be less than end).';
+      return;
+    }
+
+    const totalPlayers = end - start + 1;
+
+    if (totalPlayers < 5) {
+      errorMsg.textContent = 'Range must include at least 5 players (2 Jesters + 3 Imposters).';
+      return;
+    }
+
+    const players = Array.from({ length: totalPlayers }, (_, i) => start + i);
+    const shuffled = players.sort(() => Math.random() - 0.5);
+
+    const jesters = shuffled.slice(0, 2);
+    const imposters = shuffled.slice(2, 5);
+    const crewmates = shuffled.slice(5);
+
+    for (let i = 0; i < players.length; i++) {
+      const num = players[i];
+      const li = document.createElement('li');
+      li.textContent = `Player ${num} — `;
+
+      if (jesters.includes(num)) {
+        li.textContent += 'Jester';
+        li.className = 'jester';
+      } else if (imposters.includes(num)) {
+        li.textContent += 'Imposter';
+        li.className = 'imposter';
+      } else {
+        li.textContent += 'Crewmate';
+        li.className = 'crewmate';
+      }
+
+      results.appendChild(li);
+    }
+  }
+</script>
+
+</body>
+</html>
